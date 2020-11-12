@@ -1,12 +1,15 @@
 'use strict';
 const { Model } = require('sequelize');
+const bcrypt = require('bcrypt');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       // define association here
       User.hasMany(models.Course, {
         foreignKey: {
-          fieldName: "userId"
+          fieldName: "userId",
+          allowNull: false
         }
       });
     }
@@ -17,23 +20,56 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    emailAddress: DataTypes.STRING,
-    password: DataTypes.VIRTUAL,
-    confirmedPassword: {
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "A first name is required"
+        },
+        notEmpty: {
+          msg: "Please provide a first name"
+        }
+      }
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "A last name is required"
+        },
+        notEmpty: {
+          msg: "Please provide a last name"
+        }
+      }
+    },
+    emailAddress: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: {
+        msg: "That email already exists!"
+      }, 
+      validate: {
+        notNull: {
+          msg: "An email address is required"
+        },
+        isEmail: {
+          msg:"Please provide a valid email"
+        }
+      }
+    },
+    password: {
       type: DataTypes.STRING,
       allowNull: false,
       set(val) {
-        if (val === this.password) {
-            const hashedPassword = bcrypt.hashSync(val, 10);
-            this.setDataValue('confirmedPassword', hashedPassword);
-        }
+        const hashedPassword = bcrypt.hashSync(val, 10);
+        this.setDataValue('password', hashedPassword);
       },
       validate: {
-          notNull: {
-              msg: 'Both passwords must match'
-          }
+        notNull: {
+          msg: "A password is required"
+        }
       }
     }
   }, {

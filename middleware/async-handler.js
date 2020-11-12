@@ -1,5 +1,5 @@
 // Handler function to wrap each route.
-module.exports.asyncHandler = (cb) => {
+exports.asyncHandler = (cb) => {
     return async (req, res, next) => {
       try {
         await cb(req, res, next);

@@ -20,10 +20,38 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    title: DataTypes.STRING,
-    description: DataTypes.TEXT,
-    estimatedTime: DataTypes.STRING,
-    materialsNeeded: DataTypes.STRING
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Please provide a title"
+        },
+        notEmpty: {
+          msg: "Please provide a valid title"
+        }
+      }
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Please provide a description"
+        },
+        notEmpty: {
+          msg: "Please provide a valid description"
+        }
+      }
+    },
+    estimatedTime: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    materialsNeeded: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    }
   }, {
     sequelize,
     modelName: 'Course',
