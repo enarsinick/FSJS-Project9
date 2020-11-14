@@ -1,15 +1,22 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Course extends Model {
     static associate(models) {
       // define association here
       Course.belongsTo(models.User, {
-        as: "authenticatedUser",
+        as: "owner",
         foreignKey: {
-          fieldName: "userId"
+          fieldName: "userId",
+          allowNull: false,
+          validate: {
+            notNull: {
+              msg: "A course owner ID is required",
+            },
+            notEmpty: {
+              msg: "Please provide a course owner ID"
+            }
+          }
         }
       });
     }
@@ -55,6 +62,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Course',
+    timestamps: false
   });
   return Course;
 };

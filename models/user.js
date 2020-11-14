@@ -7,9 +7,18 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.hasMany(models.Course, {
+        as: "owner",
         foreignKey: {
           fieldName: "userId",
-          allowNull: false
+          allowNull: false,
+          validate: {
+            notNull: {
+              msg: "A course owner ID is required",
+            },
+            notEmpty: {
+              msg: "Please provide a course owner ID"
+            }
+          }
         }
       });
     }
