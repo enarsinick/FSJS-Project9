@@ -50,5 +50,40 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res, next) =>
     }
 }));
 
+// Update a course
+router.put('/courses/:id', authenticateUser, asyncHandler(async(req, res) => {
+    try {
+        // Array for any errors
+        const errors = [];
+
+        // If there is no course title
+        if (!req.body.title) {
+            errors.push('Please provide a value for "title"');
+        }
+
+        // If there is no course description
+        if (!req.body.description) {
+            errors.push('Please provide a value for "description"');
+        }
+
+        // If there are any errors
+        if (errors.length > 0) {
+            res.status(400).json({ errors });
+        } else {
+            const course = await Course.findByPk(req.params.id);
+            await course.update(req.body);
+            res.status(204).end();
+        }
+    } catch(error) {
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(err => err.message);
+            console.log(errors);
+            res.status(400).json({ errors });   
+        } else {
+            throw error;
+        } 
+    }
+}));
+
 
 module.exports = router;
