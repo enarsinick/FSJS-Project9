@@ -50,7 +50,7 @@ router.post('/courses', authenticateUser, asyncHandler(async (req, res, next) =>
     }
 }));
 
-// Update a course
+// Update a course if the user is authenticated
 router.put('/courses/:id', authenticateUser, asyncHandler(async(req, res) => {
     try {
         // Array for any errors
@@ -85,5 +85,21 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async(req, res) => {
     }
 }));
 
+// Delete a course if the user is authenticated
+router.delete('/courses/:id', authenticateUser, asyncHandler(async(req, res) => {
+    try {
+        const course = await Course.findByPk(req.params.id);
+        await course.destroy();
+        res.status(204).end();
+    } catch(error) {
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(err => err.message);
+            console.log(errors);
+            res.status(400).json({ errors });   
+        } else {
+            throw error;
+        } 
+    }
+}));
 
 module.exports = router;
