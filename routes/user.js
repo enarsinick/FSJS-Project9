@@ -4,7 +4,10 @@ const { asyncHandler } = require('../middleware/async-handler');
 const { authenticateUser } = require('../middleware/auth-user');
 const { User } = require('../models');
 
+// Find specific user
 router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
+    // Save authenticated user data to variable
+    // and return selected data to client
     const user = req.currentUser;
     res.json({
         id: user.id,
@@ -14,12 +17,12 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
     });
 }));
 
+// Create a new user
 router.post('/users', asyncHandler(async (req, res) => {
     try {
         await User.create(req.body);
         res.status(201)
             .location('/')
-            .json({ message: 'User has been created'})
             .end();
     } catch(error) {
         if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
