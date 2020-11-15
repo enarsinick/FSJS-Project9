@@ -8,6 +8,7 @@ const { User } = require('../models');
 // Returns full list of courses and owner of each course
 router.get('/courses', asyncHandler(async(req, res) => {
     const courses = await Course.findAll({
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: [
             {
                 model: User,
@@ -23,6 +24,7 @@ router.get('/courses', asyncHandler(async(req, res) => {
 router.get('/courses/:id', asyncHandler(async(req, res) => {
     const course = await Course.findOne({
         where: { id: req.params.id },
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: [
             {
                 model: User,
